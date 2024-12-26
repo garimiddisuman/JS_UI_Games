@@ -86,7 +86,7 @@ const runProgram = (program) => {
   return program;
 };
 
-const isValid = (program) => program.map((element) => +element >= 0);
+const isValid = (program) => program.every((element) => +element >= 0);
 
 const sprint = () => {
   const input = prompt("Write program here: ");
