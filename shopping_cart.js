@@ -53,6 +53,11 @@ const calculateDiscount = (table) => {
   console.log("\n  Amount with Discount ", totalWithDiscount);
 };
 
+const sortItems = (table) => {
+  const sorted = table.sort((x, y) => x.total - y.table);
+  displayItems(sorted);
+};
+
 const commandToexcute = (command) => {
   const commands = {
     show: displayItems,
@@ -60,6 +65,7 @@ const commandToexcute = (command) => {
     add: addItems,
     total: calculateAmount,
     discount: calculateDiscount,
+    sort: sortItems,
   };
 
   const spaceIndex =
@@ -74,14 +80,14 @@ const getMessage = () => "\n\n Enter an Operation :";
 
 const disPlayInstructions = () => {
   const heading = " Operations to Enter \n";
-  const instructions1 = " -> Add item\n -> Remove item name\n -> show items";
-  const instructions2 = "\n -> Total amount \n Discount";
+  let instructions = " -> Add item\n -> Remove item name\n -> show items";
+  instructions += "\n -> Total amount \n Discount \n sort items";
 
-  console.log(heading + instructions1 + instructions2);
+  console.log(heading + instructions);
 };
 
 const isValid = (command) => {
-  const commands = ["add", "show", "remove", "total", "discount"];
+  const commands = ["add", "show", "remove", "total", "discount", "sort"];
   const spaceIndex =
     command.indexOf(" ") < 0 ? command.length : command.indexOf(" ");
   const commandStarts = command.slice(0, spaceIndex).toLowerCase();
