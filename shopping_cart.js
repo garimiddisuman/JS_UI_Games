@@ -54,8 +54,16 @@ const calculateDiscount = (table) => {
 };
 
 const sortItems = (table) => {
-  const sorted = table.sort((x, y) => x.total - y.table);
+  const sorted = table.sort((x, y) => x.total - y.total);
+  console.log(sorted);
   displayItems(sorted);
+};
+
+const filterItems = (table, command) => {
+  const threshold = +command.slice(command.indexOf("above")).trim();
+  console.log(threshold, typeof threshold);
+  const filtered = table.filter(({ total }) => total > threshold);
+  displayItems(filtered);
 };
 
 const commandToexcute = (command) => {
@@ -66,11 +74,12 @@ const commandToexcute = (command) => {
     total: calculateAmount,
     discount: calculateDiscount,
     sort: sortItems,
+    filter: filterItems,
   };
 
   const spaceIndex =
     command.indexOf(" ") < 0 ? command.length : command.indexOf(" ");
-  const commandStarts = command.slice(0, spaceIndex).toLowerCase();
+  const commandStarts = command.slice(0, spaceIndex).toLowerCase().trim();
   commands[commandStarts](table, command);
 };
 
@@ -81,16 +90,26 @@ const getMessage = () => "\n\n Enter an Operation :";
 const disPlayInstructions = () => {
   const heading = " Operations to Enter \n";
   let instructions = " -> Add item\n -> Remove item name\n -> show items";
-  instructions += "\n -> Total amount \n Discount \n sort items";
+  instructions += "\n -> Total amount \n -> Discount \n -> sort items";
+  instructions += "\n -> filter by above or below total amount";
 
   console.log(heading + instructions);
 };
 
 const isValid = (command) => {
-  const commands = ["add", "show", "remove", "total", "discount", "sort"];
+  const commands = [
+    "add",
+    "show",
+    "remove",
+    "total",
+    "discount",
+    "sort",
+    "filter",
+  ];
+
   const spaceIndex =
     command.indexOf(" ") < 0 ? command.length : command.indexOf(" ");
-  const commandStarts = command.slice(0, spaceIndex).toLowerCase();
+  const commandStarts = command.slice(0, spaceIndex).toLowerCase().trim();
 
   return commands.includes(commandStarts);
 };
