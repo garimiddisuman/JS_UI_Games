@@ -1,6 +1,6 @@
 const add = (x, y) => x + y;
 const sub = (x, y) => x - y;
-const areEqual = (x, y) => x === y;
+const isEqual = (x, y) => x === y;
 const isLessThan = (x, y) => x < y;
 const halt = (currentIndex, program) => program[currentIndex];
 
@@ -23,7 +23,7 @@ const additionAndSubtraction = (currentIndex, program, operation) => {
 };
 
 const move = (currentIndex, program) => {
-  const [value, a, opcode] = getValues(currentIndex, program);
+  const [value, _, opcode] = getValues(currentIndex, program);
   program.splice(program[currentIndex + 2], 1, value);
   return [opcode, currentIndex + 3];
 };
@@ -36,13 +36,14 @@ const subtraction = (currentIndex, program) =>
 
 const lessThanOrEqualTo = (currentIndex, program, operation) => {
   const [value1, value2, nextIndex] = getValues(currentIndex, program);
+
   return operation(value1, value2)
     ? [program[nextIndex], nextIndex]
     : [program[currentIndex + 4], currentIndex + 4];
 };
 
 const equalTo = (currentIndex, program) =>
-  lessThanOrEqualTo(currentIndex, program, areEqual);
+  lessThanOrEqualTo(currentIndex, program, isEqual);
 
 const lessThan = (currentIndex, program) =>
   lessThanOrEqualTo(currentIndex, program, isLessThan);
@@ -79,7 +80,7 @@ const runProgram = (program) => {
 
 const isValidProgram = (program) => program.every((element) => element >= 0);
 
-const convertIntoArray = (input) => {
+const convertToArray = (input) => {
   const program = input.split(" ").map((x) => +x);
   program.unshift(0);
   return program;
@@ -87,7 +88,7 @@ const convertIntoArray = (input) => {
 
 const sprint = () => {
   const input = prompt("\nWrite Program Here :");
-  const program = convertIntoArray(input);
+  const program = convertToArray(input);
 
   if (!isValidProgram(program)) {
     console.error("\nInvalid program input. Please enter a valid program.");

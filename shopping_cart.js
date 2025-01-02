@@ -1,30 +1,35 @@
+const readlineSync = require("readline-sync");
+
 const table = [];
 
 const displayItems = (table) => {
   if (table.length === 0) {
-    console.table([" Empty cart "]);
+    console.table(["Empty cart"]);
     return;
   }
-
   console.table(table);
 };
 
 const deleteItem = (table, command) => {
   const itemName = command.slice(6).trim().toLowerCase();
-  const index = table.findIndex((item) => item.name === itemName);
+  const index = table.findIndex((item) => item.name.toLowerCase() === itemName);
   if (index === -1) {
-    console.log(" Item not found ");
+    console.log("Item not found");
     return;
   }
-
   table.splice(index, 1);
-  console.log("\n Item removed form cart");
+  console.log("\nItem removed from cart");
 };
 
 const addItems = (table) => {
-  const item = readUserInput(" Enter item Name :");
-  const itemPrice = +readUserInput(" Enter item Price :");
-  const itemQuantity = +readUserInput(" Enter item Quantity :");
+  const item = readlineSync.question("Enter item Name: ").trim();
+  const itemPrice = +readlineSync.question("Enter item Price: ");
+  const itemQuantity = +readlineSync.question("Enter item Quantity: ");
+
+  if (!item || itemPrice <= 0 || itemQuantity <= 0) {
+    console.log("Invalid input. Please try again.");
+    return;
+  }
 
   const newItem = {
     name: item,
@@ -34,39 +39,45 @@ const addItems = (table) => {
   };
 
   table.push(newItem);
-  console.log("\n Item added into cart");
+  console.log("\nItem added into cart");
 };
 
 const calculateAmount = (table) => {
-  const cost = table.reduce((x, item) => x + item.total, 0);
-  console.log("\n Total Amount is ", cost);
+  const cost = table.reduce((sum, item) => sum + item.total, 0);
+  console.log("\nTotal Amount is", cost);
   return cost;
 };
 
 const getDiscountPrice = (total, rate) => total - total * (rate / 100);
 
 const calculateDiscount = (table) => {
-  const rate = +readUserInput(" Enter discount percentage :");
+  const rate = +readlineSync.question("Enter discount percentage: ");
+  if (rate < 0 || rate > 100) {
+    console.log("Invalid discount percentage. Please try again.");
+    return;
+  }
   const total = calculateAmount(table);
   const totalWithDiscount = getDiscountPrice(total, rate);
-  console.log("\n Total Amount is ", total);
-  console.log("\n  Amount with Discount ", totalWithDiscount);
+  console.log("\nTotal Amount is", total);
+  console.log("\nAmount with Discount", totalWithDiscount);
 };
 
 const sortItems = (table) => {
-  const sorted = table.sort((x, y) => x.total - y.total);
-  console.log(sorted);
+  const sorted = [...table].sort((x, y) => x.total - y.total);
   displayItems(sorted);
 };
 
 const filterItems = (table, command) => {
-  const threshold = +command.slice(command.indexOf("above")).trim();
-  console.log(threshold, typeof threshold);
+  const threshold = +command.match(/\d+/)?.[0];
+  if (isNaN(threshold)) {
+    console.log("Invalid filter value. Please try again.");
+    return;
+  }
   const filtered = table.filter(({ total }) => total > threshold);
   displayItems(filtered);
 };
 
-const commandToexcute = (command) => {
+const commandToExecute = (command) => {
   const commands = {
     show: displayItems,
     remove: deleteItem,
@@ -80,51 +91,39 @@ const commandToexcute = (command) => {
   const spaceIndex =
     command.indexOf(" ") < 0 ? command.length : command.indexOf(" ");
   const commandStarts = command.slice(0, spaceIndex).toLowerCase().trim();
-  commands[commandStarts](table, command);
+
+  if (commands[commandStarts]) {
+    commands[commandStarts](table, command);
+  } else {
+    console.log("Unknown command.");
+  }
 };
-
-const readUserInput = (message) => prompt(message);
-
-const getMessage = () => "\n\n Enter an Operation :";
 
 const disPlayInstructions = () => {
-  const heading = " Operations to Enter \n";
-  let instructions = " -> Add item\n -> Remove item name\n -> show items";
-  instructions += "\n -> Total amount \n -> Discount \n -> sort items";
-  instructions += "\n -> filter by above or below total amount";
-
-  console.log(heading + instructions);
-};
-
-const isValid = (command) => {
-  const commands = [
-    "add",
-    "show",
-    "remove",
-    "total",
-    "discount",
-    "sort",
-    "filter",
-  ];
-
-  const spaceIndex =
-    command.indexOf(" ") < 0 ? command.length : command.indexOf(" ");
-  const commandStarts = command.slice(0, spaceIndex).toLowerCase().trim();
-
-  return commands.includes(commandStarts);
+  const instructions = `
+Operations to Enter:
+-> Add
+-> Remove <item name>
+-> Show
+-> Total
+-> Discount
+-> Sort
+-> Filter above <amount>
+-> Quit
+`;
+  console.log(instructions);
 };
 
 const startShopping = () => {
   disPlayInstructions();
 
   while (true) {
-    const userInput = readUserInput(getMessage());
-    if (!isValid(userInput)) {
-      console.log("\n Invalid input ");
-      continue;
+    const userInput = readlineSync.question("\nEnter an operation: ").trim();
+    if (userInput.toLowerCase() === "quit") {
+      console.log("Thank you for shopping!");
+      break;
     }
-
-    commandToexcute(userInput);
+    commandToExecute(userInput);
   }
 };
 
