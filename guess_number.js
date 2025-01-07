@@ -1,11 +1,11 @@
-function printData(noOfGames, wons, looses) {
-  console.log("\n*--- SCORE BOARD ---*");
-  console.log("| games played :", noOfGames, " |");
-  console.log("|-------------------|");
-  console.log("| games Won    :", wons, " |");
-  console.log("|-------------------|");
-  console.log("| games loose  :", looses, " |");
-  console.log("*-------------------*");
+function printData(noOfGames, wons, losses) {
+  const values = [
+    { games_played: noOfGames, games_won: wons, games_loose: losses },
+  ];
+
+  const design = "-".repeat(17);
+  console.log(`\n*${design} SCORE BOARD ${design}-*`);
+  console.table(values);
 }
 
 function repeat(wons, looses) {
@@ -40,15 +40,15 @@ function comment(secretNumber, userGuess, guessCount) {
       return addQuotes(feedBack + " you have last chance.🥵");
     default:
       console.log("\n   * secret number was '" + secretNumber + "'.");
-      return '\n--- BETTER LUCK NEXT TIME.😉 --- \n';
+      return "\n--- BETTER LUCK NEXT TIME.😉 --- \n";
   }
 }
 
 function guessNumber(secretNumber, guessCount, guessLimit, wons, looses) {
-  const guess = + prompt("\n --> Guess Secret Number :");
+  const guess = +prompt("\n --> Guess Secret Number :");
 
   if (guess === secretNumber) {
-    console.log('\n--- YOU WON...! 🏆 ---\n');
+    console.log("\n--- YOU WON...! 🏆 ---\n");
     return repeat(wons + 1, looses);
   }
 
@@ -61,7 +61,7 @@ function guessNumber(secretNumber, guessCount, guessLimit, wons, looses) {
   return guessNumber(secretNumber, guessCount + 1, guessLimit, wons, looses);
 }
 
-function start () {
+function start() {
   console.log("\n---- guess number from 0 to 9 in 3 chances -----\n");
   console.log(guessNumber(Math.floor(Math.random() * 10), 1, 3, 0, 0));
 }

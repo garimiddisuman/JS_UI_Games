@@ -71,7 +71,7 @@ const sortItems = (table) => {
 };
 
 const filterItems = (table, command) => {
-  const threshold = +command.match(/\d+/)?.[0];
+  const threshold = +command.match(/\d+/g);
 
   if (isNaN(threshold)) {
     console.log("Invalid filter value. Please try again.");
